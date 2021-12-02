@@ -2007,14 +2007,13 @@ namespace AdventOfCode2021
         {
             var increases = 0;
             var data = Data.Split(System.Environment.NewLine).Select(int.Parse).ToArray();
-            for(var i = 0; i < data.Length; i++)
+            for(var i = 3; i < data.Length; i++)
             {
-                if (i > 0)
+                var prvSum = data[i - 3] + data[i - 2] + data[i - 1];
+                var curSum = data[i - 2] + data[i - 1] + data[i];
+                if (curSum > prvSum)
                 {
-                    if (data[i] > data[i - 1])
-                    {
-                        increases++;
-                    }
+                    increases++;
                 }
             }
             System.Console.WriteLine(increases);
