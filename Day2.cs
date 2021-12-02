@@ -1005,14 +1005,18 @@ up 9
 forward 3";
         public override void Solve()
         {
-            int hPos = 0, vPos = 0;
+            int hPos = 0, vPos = 0, aim = 0;
             foreach (var line in Data.Split(Environment.NewLine))
             {
                 (var command, var val) = ParseLine(line);
-                switch(command){
-                    case "forward": hPos += val; break;
-                    case "up": vPos -= val; break;
-                    case "down": vPos += val; break;
+                switch(command)
+                {
+                    case "forward": 
+                        hPos += val;
+                        vPos += (aim * val);
+                        break;
+                    case "up": aim -= val; break;
+                    case "down": aim += val; break;
                     default: break;
                 }
             }
