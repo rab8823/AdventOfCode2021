@@ -2003,7 +2003,7 @@ namespace AdventOfCode2021
     8081
     8112
     8127";
-        public override void Solve()
+        public override void SolvePart1()
         {
             var increases = 0;
             var data = Data.Split(System.Environment.NewLine).Select(int.Parse).ToArray();
@@ -2017,6 +2017,11 @@ namespace AdventOfCode2021
                 }
             }
             System.Console.WriteLine(increases);
+        }
+
+        public override void SolvePart2()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

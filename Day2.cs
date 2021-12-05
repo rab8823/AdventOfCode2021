@@ -1003,7 +1003,7 @@ down 3
 forward 6
 up 9
 forward 3";
-        public override void Solve()
+        public override void SolvePart1()
         {
             int hPos = 0, vPos = 0, aim = 0;
             foreach (var line in Data.Split(Environment.NewLine))
@@ -1021,6 +1021,12 @@ forward 3";
                 }
             }
             Console.WriteLine(hPos * vPos);
+            
+        }
+
+        public override void SolvePart2()
+        {
+            throw new System.NotImplementedException();
         }
 
         private (string command, int val) ParseLine(string line)
