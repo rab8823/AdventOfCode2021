@@ -2,6 +2,16 @@ namespace AdventOfCode2021;
 
 public sealed class Day5 : Problem
 {
+    private const string SampleData = @"0,9 -> 5,9
+8,0 -> 0,8
+9,4 -> 3,4
+2,2 -> 2,1
+7,0 -> 7,4
+6,4 -> 2,0
+0,9 -> 2,9
+3,4 -> 1,4
+0,0 -> 8,8
+5,5 -> 8,2";
     private const string Data = @"284,294 -> 733,743
 625,347 -> 653,375
 561,848 -> 561,181
@@ -522,34 +532,55 @@ public sealed class Day5 : Problem
         }
         var board2 = new Dictionary<string, int>();
 
-        void UpdateBoard(int start, int end, int other, Func<int, string> keyGen)
-        {
-            for (var i = start; i <= end; i++)
-            {
-                var key = keyGen(i);
-                if (board2.ContainsKey(key))
-                {
-                    board2[key]++;
-                }
-                else
-                {
-                    board2.Add(key, 1);
-                }
-            }
-        }
-
         foreach (var l in lines)
         {
             if (l.X1 == l.X2)
             {
-                UpdateBoard(Math.Min(l.Y1, l.Y2), Math.Max(l.Y1, l.Y2), l.X1, k => $"{l.X1}-{k}");
+                UpdateBoard(board2, Math.Min(l.Y1, l.Y2), Math.Max(l.Y1, l.Y2), l.X1, k => $"{l.X1}-{k}");
             }
             else
             {
-                UpdateBoard(Math.Min(l.X1, l.X2), Math.Max(l.X1, l.X2), l.Y1, k => $"{k}-{l.Y1}");
+                UpdateBoard(board2, Math.Min(l.X1, l.X2), Math.Max(l.X1, l.X2), l.Y1, k => $"{k}-{l.Y1}");
             }
         }
         Console.WriteLine(board2.Values.Where(v => v > 1).Count());
+    }
+    
+    private void UpdateBoard(IDictionary<string, int> board, int start, int end, int other, Func<int, string> keyGen)
+    {
+        for (var i = start; i <= end; i++)
+        {
+            var key = keyGen(i);
+            if (board.ContainsKey(key))
+            {
+                board[key]++;
+            }
+            else
+            {
+                board.Add(key, 1);
+            }
+        }
+    }
+    
+    private void UpdateBoardDiagonal(IDictionary<string, int> board, Line l)
+    {
+        var isXReversed = l.X2 < l.X1;
+        var isYReversed = l.Y2 < l.Y1;
+        int x = l.X1, y = l.Y1;
+        while (isXReversed ? x >= l.X2 : x <= l.X2)
+        {
+            var key = $"{x}-{y}";
+            if (board.ContainsKey(key))
+            {
+                board[key]++;
+            }
+            else
+            {
+                board.Add(key, 1);
+            }
+            x += isXReversed ? -1 : 1;
+            y += isYReversed ? -1 : 1;
+        }
     }
 
     private readonly record struct Line(int X1, int Y1, int X2, int Y2);
@@ -569,8 +600,43 @@ public sealed class Day5 : Problem
 
     private static bool IsLineStraight(Line l) => l.X1 == l.X2 || l.Y1 == l.Y2;
 
+    private static bool IsLineDiagonal(Line l)
+    {
+        return Math.Abs(l.X1 - l.X2) == Math.Abs(l.Y1 - l.Y2);
+    }
+
     public override void SolvePart2()
     {
-        throw new NotImplementedException();
+        var lines = new List<Line>();
+        var board2 = new Dictionary<string, int>();
+        int straight = 0, diag = 0, total =0;
+        foreach (var line in Data.Split(Environment.NewLine))
+        {
+            var l = ParseLine(line);
+            total++;
+
+            if (IsLineDiagonal(l))
+            {
+                diag++;
+                UpdateBoardDiagonal(board2, l);
+            }
+            else if (IsLineStraight(l))
+            {
+                straight++;
+                if (l.X1 == l.X2)
+                {
+                    UpdateBoard(board2, Math.Min(l.Y1, l.Y2), Math.Max(l.Y1, l.Y2), l.X1, k => $"{l.X1}-{k}");
+                }
+                else
+                {
+                    UpdateBoard(board2, Math.Min(l.X1, l.X2), Math.Max(l.X1, l.X2), l.Y1, k => $"{k}-{l.Y1}");
+                }
+            }
+            else
+            {
+
+            }
+        }
+        Console.WriteLine(board2.Values.Where(v => v > 1).Count());
     }
 }
