@@ -152,8 +152,98 @@ public sealed class Day9 : Problem
         Console.WriteLine(sumOfRisk);
     }
 
+    private static int GetBasinSize(List<List<int>> points, int r, int c, Direction comingFrom, HashSet<(int, int)> visited = null)
+    {
+        visited = visited ?? new HashSet<(int, int)>();
+        var p = points[r][c];
+        if (p == 9) { return 0; }
+        if (visited.Contains((r, c)))
+        {
+            return 0;
+        }
+        visited.Add((r, c));
+        int size = 1;
+        if (comingFrom != Direction.Up && r > 0)
+        {
+            if (points[r - 1][c] >= p)
+            {
+                size += GetBasinSize(points, r - 1, c, Direction.Down, visited);
+            }
+        }
+        if (comingFrom != Direction.Left && c > 0)
+        {
+            if (points[r][c - 1] >= p)
+            {
+                size += GetBasinSize(points, r, c - 1, Direction.Right, visited);
+            }
+        }
+        if (comingFrom != Direction.Down && r < points.Count - 1)
+        {
+            if (points[r + 1][c] >= p)
+            {
+                size += GetBasinSize(points, r + 1, c, Direction.Up, visited);
+            }
+        }
+        if (comingFrom != Direction.Right && c < points[r].Count - 1)
+        {
+            if (points[r][c + 1] >= p)
+            {
+                size += GetBasinSize(points, r, c + 1, Direction.Left, visited);
+            }
+        }
+        return size;
+    }
+
+    private enum Direction
+    {
+        None,
+        Up,
+        Left,
+        Right,
+        Down
+    }
+
     public override void SolvePart2()
     {
-        throw new NotImplementedException();
+        List<List<int>> points = new();
+        // find size of basins
+        List<int> basinSizes = new();
+        foreach (var line in Utils.SplitLines(Data))
+        {
+            var linePoints = new List<int>();
+            foreach (var c in line)
+            {
+                linePoints.Add(((int)c) - 48);
+            }
+            points.Add(linePoints);
+        }
+
+        for (var r = 0; r < points.Count; r++)
+        {
+            for (var c = 0; c < points[r].Count; c++)
+            {
+                var top = r - 1;
+                var left = c - 1;
+                var right = c + 1;
+                var down = r + 1;
+
+                if (top >= 0) { top = points[top][c]; } else { top = int.MaxValue; }
+                if (left >= 0) { left = points[r][left]; } else { left = int.MaxValue; }
+                if (right < points[r].Count) { right = points[r][right]; } else { right = int.MaxValue; }
+                if (down < points.Count) { down = points[down][c]; } else { down = int.MaxValue; }
+
+                var p = points[r][c];
+                if (p < top &&
+                    p < left &&
+                    p < right &&
+                    p < down)
+                {
+                    basinSizes.Add(GetBasinSize(points, r, c, Direction.None));
+                }
+            }
+        }
+
+        var product = basinSizes.OrderByDescending(i => i).Take(3).Aggregate((i, t) => i * t);
+        Console.WriteLine(product);
     }
 }
