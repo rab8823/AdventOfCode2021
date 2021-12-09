@@ -310,7 +310,7 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
             Debug.Assert(four != null, "four should not be null");
             Debug.Assert(eight != null, "eight should not be null");
             segmentToChar[Segments.Top] = IdentifyTopSegment(one, seven);
-            segmentToChar[Segments.Bottom] = IdentifyBottomSegment(four, eight, segmentToChar[Segments.Top]);
+            // segmentToChar[Segments.Bottom] = IdentifyBottomSegment(four, eight, segmentToChar[Segments.Top]);
         }
         Console.WriteLine(result);
     }
@@ -328,10 +328,10 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
         throw new InvalidOperationException("should have found top segment");
     }
 
-    private static char IdentifyBottomSegment(string four, string eight, char top)
-    {
+    // private static char IdentifyBottomSegment(string four, string eight, char top)
+    // {
 
-    }
+    // }
 
     private enum Segments
     {
